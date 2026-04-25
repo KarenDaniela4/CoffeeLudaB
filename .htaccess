@@ -1,0 +1,15 @@
+# Reescritura de URLs para la API REST
+# Hace que http://localhost/CoffeeLuda/backend/api/productos/5
+# sea manejado por api/index.php?route=productos/5
+
+RewriteEngine On
+
+# Base: calcula la ruta base automáticamente
+# Si el proyecto está en http://localhost/CoffeeLuda-React/backend/, funciona igual.
+
+# No reescribir si el archivo o directorio existe (permite servir archivos reales)
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Redirige cualquier request bajo /api/... al index.php pasando la ruta como ?route=
+RewriteRule ^api/(.*)$ api/index.php?route=$1 [QSA,L]
