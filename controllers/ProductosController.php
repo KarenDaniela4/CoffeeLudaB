@@ -2,9 +2,8 @@
 /**
  * ProductosController — API REST de productos
  * 
- * Reemplaza a controller_productos.php del original.
- * Cambios fundamentales:
- *   - Respuestas en JSON (antes eran redirects con <script>window.location=...</script>)
+
+ *   - Respuestas en JSON
  *   - Verbos HTTP reales en vez de ?action=crear
  *   - Endpoints admin protegidos con JWT (antes era por $_SESSION)
  * 

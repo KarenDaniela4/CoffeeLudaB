@@ -2,7 +2,7 @@
 /**
  * UsuariosController — CRUD de usuarios (solo admin)
  * 
- * Reemplaza las acciones admin del controller_usuarios.php original.
+ 
  * 
  * Endpoints (todos requieren JWT con id_rol=1):
  *   GET    /api/usuarios        → listar todos

@@ -2,9 +2,8 @@
 /**
  * PedidosController — REST de pedidos
  * 
- * Reemplaza a controller_pedidos.php y controller_procesar_compra.php del original.
- * 
- * Endpoints:
+ 
+ *  * Endpoints:
  *   POST   /api/pedidos                          → crear compra (usuario autenticado)
  *                                                  Body: { items: [{ IdProducto, Cantidad, Precio }, ...] }
  *   GET    /api/pedidos/mios                     → mis compras (usuario autenticado)
