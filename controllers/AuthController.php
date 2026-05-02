@@ -2,13 +2,13 @@
 /**
  * AuthController — endpoints de autenticación
  * 
- * Reemplaza las acciones `validacion`, `registrarNuevo` y `cerrars` del 
- * controller_usuarios.php original.
+
  * 
  * Endpoints:
  *   POST /api/auth/login     → valida email+password, devuelve JWT
  *   POST /api/auth/registro  → autoregistro de cliente (id_rol=2)
  *   GET  /api/auth/yo        → datos del usuario autenticado (verifica token)
+ *   PUT  /api/auth/yo        → autoedición del perfil del usuario autenticado
  * 
  * Nota: no hay endpoint de logout. Con JWT stateless, el logout es del lado
  * cliente (borrar el token de localStorage). Eso lo hace AuthContext.logout().
@@ -28,6 +28,9 @@ class AuthController {
                 break;
             case 'GET:yo':
                 self::yo();
+                break;
+            case 'PUT:yo':
+                self::actualizarPerfil();
                 break;
             default:
                 http_response_code(404);
@@ -165,5 +168,82 @@ class AuthController {
         }
 
         echo json_encode($usuario);
+    }
+
+    /**
+     * PUT /auth/yo
+     * Body: { telefono, email, pregunta, respuesta, password?, confirmpassword? }
+     *
+     * Permite al usuario autenticado editar SU PROPIO perfil.
+     * NO permite cambiar id, nombre, apellido ni id_rol — esos campos se ignoran
+     * aunque vengan en el body (defensa en profundidad).
+     */
+    private static function actualizarPerfil() {
+        $payload   = JWT::requerirAutenticacion(); // cualquier rol autenticado
+        $idUsuario = $payload['id'];
+        $input     = $GLOBALS['input'];
+
+        $existente = Usuarios::getById($idUsuario);
+        if (!$existente) {
+            http_response_code(404);
+            echo json_encode(['error' => 'Usuario no encontrado']);
+            return;
+        }
+
+        // Si no viene un campo, conservamos el valor actual.
+        $telefono  = trim($input['telefono']  ?? $existente['telefono']);
+        $email     = trim($input['email']     ?? $existente['email']);
+        $pregunta  = trim($input['pregunta']  ?? $existente['pregunta']);
+        $respuesta = trim($input['respuesta'] ?? $existente['respuesta']);
+
+        // Validaciones (mismas reglas que registro.js)
+        if ($email === '') {
+            http_response_code(400);
+            echo json_encode(['error' => 'El correo es obligatorio']);
+            return;
+        }
+        if ($telefono !== '' && (strlen($telefono) !== 10 || !ctype_digit($telefono))) {
+            http_response_code(400);
+            echo json_encode(['error' => 'El teléfono debe tener exactamente 10 dígitos']);
+            return;
+        }
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            http_response_code(400);
+            echo json_encode(['error' => 'El correo electrónico no es válido']);
+            return;
+        }
+        if ($email !== $existente['email']
+            && Usuarios::emailTomadoPorOtro($email, $idUsuario)) {
+            http_response_code(409);
+            echo json_encode(['error' => 'Ya existe otra cuenta con ese correo']);
+            return;
+        }
+
+        // Cambio de contraseña: solo si el usuario llenó el campo.
+        $cambiarPassword = !empty($input['password']);
+        $password        = null;
+        if ($cambiarPassword) {
+            if (($input['password'] ?? '') !== ($input['confirmpassword'] ?? '')) {
+                http_response_code(400);
+                echo json_encode(['error' => 'Las contraseñas no coinciden']);
+                return;
+            }
+            $password = $input['password'];
+        }
+
+        $usuario = new Usuarios([
+            'id'        => $idUsuario,
+            'telefono'  => $telefono,
+            'email'     => $email,
+            'pregunta'  => $pregunta,
+            'respuesta' => $respuesta,
+            'password'  => $password,
+        ]);
+        $usuario->editarPerfilPropio($cambiarPassword);
+
+        echo json_encode([
+            'mensaje' => 'Perfil actualizado',
+            'usuario' => Usuarios::getById($idUsuario),
+        ]);
     }
 }

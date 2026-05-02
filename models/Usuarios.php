@@ -1,16 +1,9 @@
 <?php
 /**
  * Modelo Usuarios
+
  * 
- * Adaptado del modelo/usuarios.php original.
- * 
- * ⚠️ IMPORTANTE — CONTRASEÑAS EN TEXTO PLANO ⚠️
- * Este modelo guarda las contraseñas SIN HASH, igual que el original,
- * para que funcione con la base de datos existente de Daniela.
- * En un proyecto real de producción, usar password_hash() y password_verify().
- * Se mantiene así solo por compatibilidad con los datos actuales.
- * 
- * Tabla `usuarios`:
+ * Tabla usuarios:
  *   id              VARCHAR/INT PRIMARY KEY  (cédula, ingresada manualmente)
  *   nombre          VARCHAR
  *   apellido        VARCHAR
@@ -84,11 +77,13 @@ class Usuarios extends Conexion {
         return $rows;
     }
 
-    // READ — uno por ID (sin password)
+    // READ — uno por ID (sin password). Incluye pregunta/respuesta para que
+    // la página "Mi Perfil" pueda precargar el formulario.
     public static function getById($id) {
         $tmp = new Usuarios();
         $row = $tmp->getRow(
-            "SELECT id, nombre, apellido, telefono, email, id_rol FROM usuarios WHERE id = ?",
+            "SELECT id, nombre, apellido, telefono, email, pregunta, respuesta, id_rol
+             FROM usuarios WHERE id = ?",
             array($id)
         );
         $tmp->Disconnect();
@@ -99,6 +94,18 @@ class Usuarios extends Conexion {
     public static function existeEmail($email) {
         $tmp = new Usuarios();
         $row = $tmp->getRow("SELECT id FROM usuarios WHERE email = ?", array($email));
+        $tmp->Disconnect();
+        return $row !== false && $row !== null;
+    }
+
+    // READ — verifica si un email ya lo usa OTRO usuario distinto al actual.
+    // Necesario para autoedición: el usuario puede "guardar" sin cambiar su email.
+    public static function emailTomadoPorOtro($email, $idActual) {
+        $tmp = new Usuarios();
+        $row = $tmp->getRow(
+            "SELECT id FROM usuarios WHERE email = ? AND id != ?",
+            array($email, $idActual)
+        );
         $tmp->Disconnect();
         return $row !== false && $row !== null;
     }
@@ -118,6 +125,36 @@ class Usuarios extends Conexion {
         ));
     }
 
+    // UPDATE — autoedición del perfil (NO toca id, nombre, apellido ni id_rol).
+    // Si $cambiarPassword es true, también actualiza la contraseña.
+    public function editarPerfilPropio($cambiarPassword = false) {
+        if ($cambiarPassword) {
+            $sql = "UPDATE usuarios
+                    SET telefono = ?, email = ?, pregunta = ?, respuesta = ?,
+                        password = ?, confirmpassword = ?
+                    WHERE id = ?";
+            return $this->updateRow($sql, array(
+                $this->telefono,
+                $this->email,
+                $this->pregunta,
+                $this->respuesta,
+                $this->password,
+                $this->password,  // confirmpassword = password
+                $this->id,
+            ));
+        }
+        $sql = "UPDATE usuarios
+                SET telefono = ?, email = ?, pregunta = ?, respuesta = ?
+                WHERE id = ?";
+        return $this->updateRow($sql, array(
+            $this->telefono,
+            $this->email,
+            $this->pregunta,
+            $this->respuesta,
+            $this->id,
+        ));
+    }
+
     // DELETE
     public function eliminar() {
         $sql = "DELETE FROM usuarios WHERE id = ?";
@@ -130,7 +167,7 @@ class Usuarios extends Conexion {
      */
     public static function validarCredenciales($email, $password) {
         $tmp = new Usuarios();
-        // ⚠️ comparación directa en texto plano — ver advertencia al inicio del archivo
+        // comparación directa en texto plano — ver advertencia al inicio del archivo
         $row = $tmp->getRow(
             "SELECT id, nombre, apellido, email, id_rol FROM usuarios WHERE email = ? AND password = ?",
             array($email, $password)
