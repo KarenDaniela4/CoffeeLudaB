@@ -1,13 +1,16 @@
 <?php
-// Permitir que Netlify acceda a los datos
+// 1. Permisos para que Netlify pueda leer, crear, editar y borrar
 header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
-header("Access-Control-Allow-Headers: Content-Type, Authorization");
+header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
 
-// Si es una petición OPTIONS (pre-vuelo), terminar aquí
+// 2. Responder rápido a la pregunta de seguridad del navegador (Preflight)
 if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+    http_response_code(200);
     exit;
 }
+
+// ... aquí sigue el resto de tu código
 
 // ... aquí sigue tu código de conexión y consulta SQL ...// ... resto de tu código
 /**
