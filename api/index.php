@@ -1,4 +1,8 @@
 <?php
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Headers: content-type");
+header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
+// ... resto de tu código
 /**
  * Router principal de la API REST.
  * 

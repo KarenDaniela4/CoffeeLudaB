@@ -12,10 +12,10 @@ abstract class Conexion {
     protected $datab;
 
     // Credenciales por defecto de XAMPP / WAMP / MAMP
-    private $username = "if0_41816208";
-    private $password = "epSu1laIaRoKYh4";
-    private $host     = "sql112.infinityfree.com";
-    private $dbname   = "if0_41816208_coffee_luda_db";
+    private $username = "coffeludabd_user";
+    private $password = "vvdtnzIMK5JduYkantp8STB2snYAGeA7";
+    private $host     = "dpg-d7rfgsjeo5us73dd1qc0-a";
+    private $dbname   = "coffeludabd";
 
     public function __construct() {
         $this->isConnected = true;
