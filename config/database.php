@@ -12,10 +12,10 @@ abstract class Conexion {
     protected $datab;
 
     // Credenciales por defecto de XAMPP / WAMP / MAMP
-    private $username = "coffeludabd_user";
-    private $password = "vvdtnzIMK5JduYkantp8STB2snYAGeA7";
-    private $host     = "dpg-d7rfgsjeo5us73dd1qc0-a";
-    private $dbname   = "coffeludabd";
+    private $username = "uwcbga61svye8fmp";
+    private $password = "7ephn2WKrJgep9L0Hk4r";
+    private $host     = "bgyiixxak63zuijixe8s-mysql.services.clever-cloud.com";
+    private $dbname   = "bgyiixxak63zuijixe8s";
 
     public function __construct() {
         $this->isConnected = true;
