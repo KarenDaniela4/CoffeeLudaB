@@ -12,11 +12,11 @@
 --     2. Pestaña "Importar" → seleccionar este archivo → Continuar
 -- =========================================================================
 
-CREATE DATABASE IF NOT EXISTS coffee
-  CHARACTER SET utf8mb4
-  COLLATE utf8mb4_unicode_ci;
+--CREATE DATABASE IF NOT EXISTS coffee
+--  CHARACTER SET utf8mb4
+--  COLLATE utf8mb4_unicode_ci;
 
-USE coffee;
+--USE coffee;
 
 -- -------------------------------------------------------------------------
 -- Tabla: roles

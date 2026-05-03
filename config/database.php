@@ -1,14 +1,7 @@
 <?php
 /**
  * Clase base de conexión a la base de datos MySQL.
- * 
- * Adaptada del original modelo/conexion.php del proyecto PHP puro.
- * Cambios principales:
- *   - Se removieron los métodos abstractos `buscar`, `selectAll`, etc. que no se usaban
- *     realmente en los modelos hijos (solo estaban como stubs vacíos).
- *   - Se mantiene la interfaz pública: getRow, getRows, insertRow, updateRow, deleteRow.
- *   - Los modelos hijos (usuarios, productos, pedidos) se mantienen casi idénticos.
- * 
+  
  * NOTA: En producción, las credenciales NO deben ir hardcodeadas.
  * Usar variables de entorno con getenv() o un archivo .env.
  */
@@ -19,10 +12,10 @@ abstract class Conexion {
     protected $datab;
 
     // Credenciales por defecto de XAMPP / WAMP / MAMP
-    private $username = "root";
-    private $password = "";
-    private $host     = "localhost";
-    private $dbname   = "coffee";
+    private $username = "if0_41816208";
+    private $password = "epSu1laIaRoKYh4";
+    private $host     = "sql112.infinityfree.com";
+    private $dbname   = "if0_41816208_coffee_luda_db";
 
     public function __construct() {
         $this->isConnected = true;

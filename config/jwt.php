@@ -1,19 +1,7 @@
 <?php
 /**
- * JWT Helper — Implementación mínima de JSON Web Tokens (HS256)
- * 
- * ¿Por qué no usamos firebase/php-jwt vía Composer?
- *   Para que Daniela no necesite instalar Composer en su equipo con XAMPP.
- *   Esta implementación casera es suficiente para este proyecto académico.
- *   En un proyecto real de producción, usar firebase/php-jwt es la práctica recomendada.
- * 
- * ¿Qué es un JWT?
- *   Un string con 3 partes separadas por puntos: header.payload.signature
- *   - header: JSON con el algoritmo, codificado en base64url
- *   - payload: JSON con los datos del usuario (id, email, rol, exp), codificado en base64url
- *   - signature: HMAC-SHA256 de (header.payload) usando una clave secreta
- * 
- * FLUJO:
+
+ *  * FLUJO:
  *   1. Usuario hace login → servidor genera JWT y lo devuelve al cliente
  *   2. Cliente guarda el JWT en localStorage
  *   3. En cada request, cliente envía: Authorization: Bearer <token>
