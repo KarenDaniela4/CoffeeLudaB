@@ -1,8 +1,15 @@
 <?php
+// Permitir que Netlify acceda a los datos
 header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Headers: content-type");
 header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
-// ... resto de tu código
+header("Access-Control-Allow-Headers: Content-Type, Authorization");
+
+// Si es una petición OPTIONS (pre-vuelo), terminar aquí
+if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+    exit;
+}
+
+// ... aquí sigue tu código de conexión y consulta SQL ...// ... resto de tu código
 /**
  * Router principal de la API REST.
  * 
